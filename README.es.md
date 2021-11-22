@@ -10,7 +10,6 @@
 
 ## 💡 Requisitos
 - Java 8 o superior (sigue las instrucciones de descarga [aquí](https://java.com/es/download/help/download_options.html)).
-- [Maven](https://maven.apache.org/) (dependency manager).
 - [Lee nuestras instrucciones](https://www.mercadopago.com.br/developers/es/guides/overview#bookmark_el_desarrollo_con_c%C3%B3digo) sobre cómo crear una aplicación en el Panel de Desarrolladores de Mercado Pago para obtener el access token. Esta llave te dará acceso a las API de Mercado Pago.
 - Para obtener información detallada sobre cómo recibir pagos con Pix, [por favor lee nuestra guía](https://www.mercadopago.com.br/developers/es/guides/online-payments/checkout-api/other-payment-ways#bookmark_recibir_pagos_con_pix) en Mercado Pago Developers.
 
@@ -25,10 +24,29 @@ git clone https://github.com/mercadopago/pix-payment-sample-java.git
 cd pix-payment-sample-java
 ```
 
+3. Ejecuta el siguiente comando:
+
+Linux / MacOS
+```bash
+./mvnw clean install
+```
+
+Windows
+```bash
+./mvnw.cmd clean install
+```
+
 ## 🌟 Como ejecutar
 1. Ejecuta el siguiente comando para iniciar la aplicación:
+
+Linux / MacOS
 ```bash
-mvn spring-boot:run -Dspring-boot.run.arguments="--mercado_pago_sample_access_token=YOUR_ACCESS_TOKEN"
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--mercado_pago_sample_access_token=YOUR_ACCESS_TOKEN"
+``` 
+
+Windows
+```bash
+./mvnw.cmd spring-boot:run -Dspring-boot.run.arguments="--mercado_pago_sample_access_token=YOUR_ACCESS_TOKEN"
 ``` 
 
 2. Recuerda cambiar el valor de `YOUR_ACCESS_TOKEN` por la [credencial](https://www.mercadopago.com.br/developers/panel) de su cuenta.
