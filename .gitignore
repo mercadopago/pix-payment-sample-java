@@ -1,9 +1,6 @@
 HELP.md
 !.mvn/wrapper/maven-wrapper.jar
-.mvn
-mvnw
-mvnw.cmd
-target/
+target
 
 ### STS ###
 .apt_generated
