@@ -397,4 +397,8 @@ footer p a:hover {
 /* Payment Result Section - Start */
 .container__result {
     display: none;
-} 
+}
+
+#fail-response, #success-response, #pix-code-section {
+    display: none;
+}
