@@ -1,13 +1,13 @@
 package com.mercadopago.sample.dto;
 
 public class PixPaymentResponseDTO {
-    private String id;
+    private Long id;
     private String status;
     private String detail;
     private String qrCodeBase64;
     private String qrCode;
 
-    public PixPaymentResponseDTO(String id, String status, String detail, String qrCodeBase64, String qrCode) {
+    public PixPaymentResponseDTO(Long id, String status, String detail, String qrCodeBase64, String qrCode) {
         this.id = id;
         this.status = status;
         this.detail = detail;
@@ -15,11 +15,11 @@ public class PixPaymentResponseDTO {
         this.qrCode = qrCode;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

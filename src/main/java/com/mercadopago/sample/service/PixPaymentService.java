@@ -1,14 +1,16 @@
 package com.mercadopago.sample.service;
 
-import com.google.gson.JsonElement;
+import com.mercadopago.MercadoPagoConfig;
+import com.mercadopago.client.common.IdentificationRequest;
+import com.mercadopago.client.payment.PaymentClient;
+import com.mercadopago.client.payment.PaymentCreateRequest;
+import com.mercadopago.client.payment.PaymentPayerRequest;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.sample.dto.PixPaymentResponseDTO;
 import com.mercadopago.sample.exception.MercadoPagoException;
 import com.mercadopago.sample.dto.PixPaymentDTO;
-import com.mercadopago.MercadoPago;
 import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.Payment;
-import com.mercadopago.resources.datastructures.payment.Identification;
-import com.mercadopago.resources.datastructures.payment.Payer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,52 +21,42 @@ public class PixPaymentService {
 
     public PixPaymentResponseDTO processPayment(PixPaymentDTO pixPaymentDTO) {
         try {
-            MercadoPago.SDK.setAccessToken(mercadoPagoAccessToken);
+            MercadoPagoConfig.setAccessToken(mercadoPagoAccessToken);
 
-            Payment payment = new Payment();
+            PaymentClient paymentClient = new PaymentClient();
 
-            payment.setTransactionAmount(pixPaymentDTO.getTransactionAmount())
-                    .setDescription(pixPaymentDTO.getProductDescription())
-                    .setPaymentMethodId("pix")
-                    .setPayer(new Payer()
-                            .setEmail(pixPaymentDTO.getPayer().getEmail())
-                            .setFirstName(pixPaymentDTO.getPayer().getFirstName())
-                            .setLastName(pixPaymentDTO.getPayer().getLastName())
-                            .setIdentification(new Identification()
-                                    .setType(pixPaymentDTO.getPayer().getIdentification().getType())
-                                    .setNumber(pixPaymentDTO.getPayer().getIdentification().getNumber())
-                            )
-                    );
+            PaymentCreateRequest paymentCreateRequest =
+                PaymentCreateRequest.builder()
+                    .transactionAmount(pixPaymentDTO.getTransactionAmount())
+                    .description(pixPaymentDTO.getProductDescription())
+                    .paymentMethodId("pix")
+                    .payer(
+                        PaymentPayerRequest.builder()
+                            .email(pixPaymentDTO.getPayer().getEmail())
+                            .firstName(pixPaymentDTO.getPayer().getFirstName())
+                            .lastName(pixPaymentDTO.getPayer().getLastName())
+                            .identification(
+                                IdentificationRequest.builder()
+                                    .type(pixPaymentDTO.getPayer().getIdentification().getType())
+                                    .number(pixPaymentDTO.getPayer().getIdentification().getNumber())
+                                    .build())
+                            .build())
+                    .build();
 
-            Payment createdPayment = payment.save();
+            Payment createdPayment = paymentClient.create(paymentCreateRequest);
 
-            this.validatePaymentResult(createdPayment);
-
-            PixPaymentResponseDTO pixPaymentResponseDTO = new PixPaymentResponseDTO(
-                    createdPayment.getId(),
-                    String.valueOf(createdPayment.getStatus()),
-                    createdPayment.getStatusDetail(),
-                    createdPayment.getPointOfInteraction().getTransactionData().getQrCodeBase64(),
-                    createdPayment.getPointOfInteraction().getTransactionData().getQrCode()
-            );
-
-            return pixPaymentResponseDTO;
+            return new PixPaymentResponseDTO(
+                createdPayment.getId(),
+                String.valueOf(createdPayment.getStatus()),
+                createdPayment.getStatusDetail(),
+                createdPayment.getPointOfInteraction().getTransactionData().getQrCodeBase64(),
+                createdPayment.getPointOfInteraction().getTransactionData().getQrCode());
+        } catch (MPApiException apiException) {
+            System.out.println(apiException.getApiResponse().getContent());
+            throw new MercadoPagoException(apiException.getApiResponse().getContent());
         } catch (MPException exception) {
             System.out.println(exception.getMessage());
             throw new MercadoPagoException(exception.getMessage());
-        }
-    }
-
-    private void validatePaymentResult(Payment createdPayment) throws MPException {
-        if(createdPayment.getId() == null) {
-            String errorMessage = "Unknown error cause";
-
-            if(createdPayment.getLastApiResponse() != null) {
-                String sdkErrorMessage = createdPayment.getLastApiResponse().getJsonElementResponse().getAsJsonObject().get("message").getAsString();
-                errorMessage = sdkErrorMessage != null ? sdkErrorMessage : errorMessage;
-            }
-
-            throw new MPException(errorMessage);
         }
     }
 }

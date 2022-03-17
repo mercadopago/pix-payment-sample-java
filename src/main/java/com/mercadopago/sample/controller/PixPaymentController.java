@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/process_payment")
 public class PixPaymentController {
-    private PixPaymentService pixPaymentService;
+    private final PixPaymentService pixPaymentService;
 
     @Autowired
     public PixPaymentController(PixPaymentService pixPaymentService) {
