@@ -2,11 +2,12 @@ package com.mercadopago.sample.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
 
 public class PixPaymentDTO {
     @NotNull
-    private Float transactionAmount;
+    private BigDecimal transactionAmount;
 
     @NotNull
     @JsonProperty("description")
@@ -18,11 +19,11 @@ public class PixPaymentDTO {
     public PixPaymentDTO() {
     }
 
-    public Float getTransactionAmount() {
+    public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
 
-    public void setTransactionAmount(Float transactionAmount) {
+    public void setTransactionAmount(BigDecimal transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
 
